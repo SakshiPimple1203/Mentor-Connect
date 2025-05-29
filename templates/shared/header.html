@@ -1,0 +1,20 @@
+<header class="top-header">
+    <div class="notification-area">
+        <div class="notification-icon">
+            <i class="fas fa-bell"></i>
+            {% if session.role == 'mentor' %}
+            <span class="badge">2</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="user-area">
+        <div class="user-initial">
+            {{ session.name[0] | upper }}
+        </div>
+        <div class="user-info">
+            <div class="user-name">{{ session.name }}</div>
+            <div class="user-email">{{ session.email }}</div>
+        </div>
+    </div>
+</header>

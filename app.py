@@ -1064,7 +1064,7 @@ def remove_mentee(mentee_id):
 @app.route("/mentor/schedule_meeting/<int:mentee_id>", methods=["GET", "POST"])
 def schedule_meeting_with_mentee(mentee_id=0):
     if not is_logged_in() or session.get("role") != "mentor":
-        flash("You do not have permission for this action", "error")
+        flash("You do not have permission to this action", "error")
         return redirect(url_for("index"))
 
     mentor_id = session.get("user_id")
@@ -1143,7 +1143,7 @@ def schedule_meeting_with_mentee(mentee_id=0):
 @app.route("/mentor/schedule_meeting", methods=["GET", "POST"])
 def schedule_meeting():
     if not is_logged_in() or session.get("role") != "mentor":
-        flash("You do not have permission for this action", "error")
+        flash("You do not have permission to this action", "error")
         return redirect(url_for("index"))
 
     mentor_id = session.get("user_id")
@@ -1332,8 +1332,18 @@ def mentor_posts():
         (user_id,),
     ).fetchall()
 
+    # Fetch comments for each post (add this block)
+    comments = cursor.execute(
+        """
+        SELECT c.post_id, c.content, c.created_at, u.first_name, u.last_name
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        ORDER BY c.created_at ASC
+        """
+    ).fetchall()
+
     conn.close()
-    return render_template("mentor/posts.html", posts=posts)
+    return render_template("mentor/posts.html", posts=posts, comments=comments)
 
 
 @app.route("/mentee/posts", methods=["GET", "POST"])
@@ -1601,5 +1611,4 @@ def mentor_profile():
 
 # Main execution
 if __name__ == "__main__":
-    create_database()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
